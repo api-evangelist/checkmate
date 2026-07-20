@@ -1,0 +1,36 @@
+generated: '2026-07-18'
+method: searched
+source: https://api.openstock.sh/openapi.json (info.description) + https://openstock.sh
+docs: https://api.openstock.sh/docs
+summary:
+  types:
+  - http
+  api_key_in:
+  - header
+  oauth2_flows: []
+  note: >-
+    The OpenStock OpenAPI does not declare a formal components.securitySchemes
+    block; authentication is documented in prose in the spec description and on
+    the OpenStock site. All authenticated endpoints require a bearer API key.
+schemes:
+- name: bearerApiKey
+  type: http
+  scheme: bearer
+  in: header
+  parameter: Authorization
+  format: 'Authorization: Bearer <api_key>'
+  description: >-
+    Partner API key issued by a Checkmate/OpenStock partner representative
+    ("Ask partner representative for the API key"). Presented as an
+    HTTP bearer token on every request except GET /health. Missing or invalid
+    keys return 401. Rate limits are enforced per partner.
+  sources:
+  - openapi/checkmate-openstock-openapi-original.json
+mcp_auth:
+  server: https://mcp.joincheckmate.com
+  scheme: bearer
+  header: Authorization
+  format: 'Authorization: Bearer ${KEY}'
+  note: >-
+    The OpenStock MCP server uses the same bearer credential; a single
+    credential grants access to the entire 284,000+ merchant network.
