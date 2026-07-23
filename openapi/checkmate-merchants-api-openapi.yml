@@ -1,0 +1,396 @@
+openapi: 3.1.0
+info:
+  version: 1.0.0
+  title: OpenStock Health Merchants API
+  description: 'API provided by Checkmate to partners to provide access to merchant codes and shopper purchase history. All endpoints are POST with batched request/response shapes. Authenticate with `Authorization: Bearer <api_key>`. Ask partner representative for the API key.'
+servers:
+- url: https://api.openstock.sh
+  description: Current environment
+tags:
+- name: Merchants
+paths:
+  /v1/merchants/search:
+    post:
+      tags:
+      - Merchants
+      summary: Batch merchant search
+      description: 'Search for merchants by name (fuzzy) or domain (exact match). Up to 20 queries per request. Each query carries its own `query_id` that is echoed back so callers can correlate responses. Each result contains an `items` array with matched merchants. Name queries return up to `limit` items per result (default 5, max 20). Misses return a single item with `id: null` — there are no 404s.'
+      security:
+      - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MerchantSearchRequest'
+      responses:
+        '200':
+          description: 'Per-query results. Each result has an `items` array. A name query with limit > 1 may produce multiple items. Misses have id: null.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MerchantSearchResponse'
+        '400':
+          description: Invalid request body or query cap exceeded (max 50 queries)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Missing or invalid API key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Too many requests. Rate limits are determined on a per partner basis.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /v1/merchants/codes:
+    post:
+      tags:
+      - Merchants
+      summary: Batch merchant offer codes
+      description: Retrieve ranked offer codes for a set of merchants. Up to 20 queries per request. Each result contains an `items` array of codes; misses return an empty `items` array. Add an `idempotency_key` to deduplicate requests; we suggest using `sha256(user_email + date)` or similar.
+      security:
+      - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MerchantCodesRequest'
+      responses:
+        '200':
+          description: Per-query results. Each result has an `items` array of codes. Misses return an empty `items` array.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MerchantCodesResponse'
+        '400':
+          description: Invalid request body, missing idempotency_key, or query cap exceeded (max 20)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Missing or invalid API key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Too many requests. Rate limits are determined on a per partner basis.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    MerchantCodesQuery:
+      type: object
+      properties:
+        query_id:
+          type: string
+          minLength: 1
+          example: q1
+          description: Caller-supplied opaque identifier correlated back in results
+        merchant_id:
+          type: string
+          minLength: 1
+          example: 01hz4vdrcnxhfmfcvy3rfqk1fp
+          description: Checkmate merchant ID obtained from the search endpoint
+        idempotency_key:
+          type: string
+          minLength: 1
+          example: a3f1e2d4b5c6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2
+          description: Deduplication key for this query. We suggest using `sha256(user_email + date)` or similar.
+      required:
+      - query_id
+      - merchant_id
+      - idempotency_key
+    MerchantSearchItem:
+      type: object
+      properties:
+        id:
+          type:
+          - string
+          - 'null'
+          example: 01hz4vdrcnxhfmfcvy3rfqk1fp
+          description: Checkmate merchant ID, or null when not found
+        name:
+          type:
+          - string
+          - 'null'
+          example: Acme Corp
+          description: Merchant display name, or null when no match
+        domains:
+          type: array
+          items:
+            type: string
+          example:
+          - acme.com
+          - acme.co.uk
+          description: Merchant domains
+        estimated_shipping:
+          $ref: '#/components/schemas/EstimatedShipping'
+      required:
+      - id
+      - name
+      - domains
+      - estimated_shipping
+    MerchantCodesResponse:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/MerchantCodesResult'
+      required:
+      - results
+    EstimatedShipping:
+      type:
+      - object
+      - 'null'
+      properties:
+        unit:
+          type: string
+          enum:
+          - days
+          example: days
+          description: Unit for all shipping time values in this object
+        median:
+          type: number
+          example: 6
+          description: Median days to deliver
+        q1:
+          type:
+          - number
+          - 'null'
+          example: 3
+          description: First quartile (25th percentile) days to deliver, or null when unknown
+        q3:
+          type:
+          - number
+          - 'null'
+          example: 10
+          description: Third quartile (75th percentile) days to deliver, or null when unknown
+      required:
+      - unit
+      - median
+      - q1
+      - q3
+      description: Estimated shipping time statistics, or null when unknown
+    MerchantSearchRequest:
+      type: object
+      properties:
+        queries:
+          type: array
+          items:
+            $ref: '#/components/schemas/MerchantSearchQuery'
+          minItems: 1
+          maxItems: 50
+          description: Batch of search queries (1–50). Each query returns a result with an `items` array. Name queries with `limit > 1` may yield multiple items. Misses return an `items` array with a single entry where `id` is null.
+      required:
+      - queries
+    MerchantSearchQuery:
+      type: object
+      properties:
+        query_id:
+          type: string
+          minLength: 1
+          example: q1
+          description: Caller-supplied opaque identifier correlated back in results
+        type:
+          type: string
+          enum:
+          - name
+          - domain
+          example: name
+          description: '"name" triggers fuzzy search; "domain" is an exact-match lookup'
+        value:
+          type: string
+          minLength: 1
+          example: Acme
+          description: 'Search term: merchant name fragment or bare domain'
+        region:
+          type: string
+          example: US
+          description: Optional ISO 3166-1 alpha-2 region filter (name queries only)
+        limit:
+          type: integer
+          minimum: 1
+          maximum: 20
+          default: 5
+          example: 5
+          description: Maximum number of results to return for this query (name queries only, domain queries always return at most one result). Defaults to 5.
+      required:
+      - query_id
+      - type
+      - value
+    MerchantCodesRequest:
+      type: object
+      properties:
+        queries:
+          type: array
+          items:
+            $ref: '#/components/schemas/MerchantCodesQuery'
+          minItems: 1
+          maxItems: 20
+          description: Batch of codes queries (1–20)
+      required:
+      - queries
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              example: VALIDATION_ERROR
+            message:
+              type: string
+              example: Request body is invalid
+          required:
+          - code
+          - message
+      required:
+      - error
+    OfferCode:
+      type: object
+      properties:
+        code:
+          type:
+          - string
+          - 'null'
+          example: SAVE10
+          description: Promo code string, or null for codeless offers
+        probability:
+          type: number
+          minimum: 0
+          maximum: 1
+          example: 0.92
+          description: Estimated probability (0–1) that the code will work at checkout
+        single_use:
+          type: boolean
+          example: false
+          description: True when the code expires after one redemption
+        value_type:
+          type: string
+          enum:
+          - percent
+          - fixed
+          - free_shipping
+          - unknown
+          example: percent
+          description: How the discount value is expressed
+        value_amount:
+          type:
+          - number
+          - 'null'
+          example: 10
+          description: Numeric discount amount; semantics depend on value_type (e.g. 10 = 10% or $10)
+        currency:
+          type:
+          - string
+          - 'null'
+          example: USD
+          description: ISO 4217 currency code, present when value_type is "fixed"
+        conditions:
+          type: array
+          items:
+            type: string
+          example:
+          - minimum_subtotal
+          description: Machine-readable condition tags (e.g. minimum_subtotal, product_restricted, applies_on_subscription)
+        redirect_url:
+          type:
+          - string
+          - 'null'
+          example: https://go.checkmate.com/r/acme?code=SAVE10&ref=ck_partner_api
+          description: Checkmate affiliate-attributed deep-link; null when unavailable
+        expires_at:
+          type:
+          - number
+          - 'null'
+          example: null
+          description: Unix timestamp (ms) when the code expires, or null when it does not expire
+        last_success:
+          type:
+          - string
+          - 'null'
+          example: '2026-06-16T17:00:00.000Z'
+          description: ISO 8601 UTC timestamp of the most recent successful checkout with this code, or null when never observed
+        description:
+          type:
+          - string
+          - 'null'
+          example: 10% off your first order
+          description: Human-readable description of the offer or null
+        apply_count:
+          type:
+          - number
+          - 'null'
+          example: 1280
+          description: Number of times this code has been applied at checkout, or null when not tracked (e.g. campaign/minted codes)
+        success_count:
+          type:
+          - number
+          - 'null'
+          example: 940
+          description: Number of times this code applied successfully (yielded a saving), or null when not tracked (e.g. campaign/minted codes)
+      required:
+      - code
+      - probability
+      - single_use
+      - value_type
+      - value_amount
+      - currency
+      - conditions
+      - redirect_url
+      - expires_at
+      - last_success
+      - description
+      - apply_count
+      - success_count
+    MerchantSearchResponse:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/MerchantSearchResult'
+      required:
+      - results
+    MerchantSearchResult:
+      type: object
+      properties:
+        query_id:
+          type: string
+          example: q1
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/MerchantSearchItem'
+          minItems: 1
+          description: 'Matched merchants for this query. Always contains at least one entry. Misses return a single entry with `id: null`; name queries with `limit > 1` may return multiple entries.'
+      required:
+      - query_id
+      - items
+    MerchantCodesResult:
+      type: object
+      properties:
+        query_id:
+          type: string
+          example: q1
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/OfferCode'
+          description: Ranked list of offer codes (minted / static / codeless / partnership / public). Empty array on miss.
+      required:
+      - query_id
+      - items

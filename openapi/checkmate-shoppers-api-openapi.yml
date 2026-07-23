@@ -1,0 +1,141 @@
+openapi: 3.1.0
+info:
+  version: 1.0.0
+  title: OpenStock Health Shoppers API
+  description: 'API provided by Checkmate to partners to provide access to merchant codes and shopper purchase history. All endpoints are POST with batched request/response shapes. Authenticate with `Authorization: Bearer <api_key>`. Ask partner representative for the API key.'
+servers:
+- url: https://api.openstock.sh
+  description: Current environment
+tags:
+- name: Shoppers
+paths:
+  /v1/shoppers/history:
+    post:
+      tags:
+      - Shoppers
+      summary: Batch shopper purchase history
+      description: Look up purchase history for one or more shoppers identified by SHA-256 hash of their normalised (lowercase-trimmed) email address. Never send raw email addresses. Up to 20 queries per request. Each result contains a flat `items` array of merchant interactions; unknown shoppers return an empty `items` array — there are no 404s.
+      security:
+      - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShopperHistoryRequest'
+      responses:
+        '200':
+          description: Per-query shopper history. Each result has a flat `items` array of merchant interactions. Unknown shoppers return an empty array.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShopperHistoryResponse'
+        '400':
+          description: Invalid request body, malformed email_sha256, or query cap exceeded (max 20)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Missing or invalid API key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Too many requests. Rate limits are determined on a per partner basis.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    ShopperHistoryResult:
+      type: object
+      properties:
+        query_id:
+          type: string
+          example: q1
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ShopperActivity'
+          description: Flat list of merchant interactions for this shopper. Empty array when the shopper is unknown.
+      required:
+      - query_id
+      - items
+    ShopperHistoryRequest:
+      type: object
+      properties:
+        queries:
+          type: array
+          items:
+            $ref: '#/components/schemas/ShopperHistoryQuery'
+          minItems: 1
+          maxItems: 20
+          description: Batch of shopper-history queries (1–20)
+      required:
+      - queries
+    ShopperHistoryResponse:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ShopperHistoryResult'
+      required:
+      - results
+    ShopperHistoryQuery:
+      type: object
+      properties:
+        query_id:
+          type: string
+          minLength: 1
+          example: q1
+          description: Caller-supplied opaque identifier correlated back in results
+        email_sha256:
+          type: string
+          pattern: ^[0-9a-f]{64}$
+          example: b94d27b9934d3e08a52e52d7da7dabfac484efe04294e576e50e46a7d3f5a4b8
+          description: SHA-256 of the lowercase-trimmed email address; never send the raw email
+      required:
+      - query_id
+      - email_sha256
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              example: VALIDATION_ERROR
+            message:
+              type: string
+              example: Request body is invalid
+          required:
+          - code
+          - message
+      required:
+      - error
+    ShopperActivity:
+      type: object
+      properties:
+        merchant_id:
+          type: string
+          example: 01hz4vdrcnxhfmfcvy3rfqk1fp
+          description: Checkmate merchant ID
+        merchant_name:
+          type: string
+          example: Acme Corp
+        type:
+          type: string
+          enum:
+          - visited
+          - purchased
+          example: purchased
+          description: 'Activity type: "visited" or "purchased"'
+      required:
+      - merchant_id
+      - merchant_name
+      - type
