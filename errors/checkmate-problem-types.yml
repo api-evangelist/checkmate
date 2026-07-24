@@ -1,0 +1,46 @@
+generated: '2026-07-18'
+method: derived
+source: openapi/checkmate-openstock-openapi-original.json (4xx responses) + api.openstock.sh/docs
+format: custom
+envelope:
+  shape: '{ "error": { "code": string, "message": string } }'
+  note: >-
+    OpenStock does NOT use RFC 9457 application/problem+json. Errors return an
+    application/json body with a single `error` object carrying a machine-readable
+    `code` and a human `message`. Both fields are required.
+problems:
+- status: 400
+  code: VALIDATION_ERROR
+  title: Invalid request
+  detail: >-
+    Invalid request body, a query cap was exceeded, or a required field is
+    missing. /v1/merchants/search caps at 50 queries; /v1/merchants/codes caps
+    at 20 queries and requires an idempotency_key; /v1/shoppers/history caps at
+    20 queries and requires a well-formed email_sha256.
+  source_operations:
+  - 'POST /v1/merchants/search'
+  - 'POST /v1/merchants/codes'
+  - 'POST /v1/shoppers/history'
+- status: 401
+  code: UNAUTHORIZED
+  title: Missing or invalid API key
+  detail: The Authorization bearer API key is missing, malformed, or invalid.
+  remediation: 'Include `Authorization: Bearer <api_key>`; request a key from your partner representative.'
+  source_operations:
+  - 'POST /v1/merchants/search'
+  - 'POST /v1/merchants/codes'
+  - 'POST /v1/shoppers/history'
+- status: 429
+  code: RATE_LIMITED
+  title: Too many requests
+  detail: Rate limits are determined on a per-partner basis.
+  remediation: Back off and retry; contact your partner representative to raise limits.
+  source_operations:
+  - 'POST /v1/merchants/search'
+  - 'POST /v1/merchants/codes'
+  - 'POST /v1/shoppers/history'
+notes: >-
+  The `code` values 401/429 above are labelled from the response descriptions;
+  the spec only shows VALIDATION_ERROR verbatim as an example code. Per-query
+  "misses" are NOT errors — merchant search returns id:null for a miss, codes
+  returns an empty items[] array, and shopper history returns an empty array.

@@ -1,0 +1,27 @@
+generated: '2026-07-18'
+method: derived
+source: openapi/checkmate-openstock-openapi-original.json + https://openstock.sh + https://api.openstock.sh
+versioning:
+  scheme: uri-path
+  current: v1
+  spec_version: 1.0.0
+  detail: >-
+    Endpoints are namespaced under /v1 (/v1/merchants/search, /v1/merchants/codes,
+    /v1/shoppers/history). The OpenAPI reports info.version 1.0.0 and a single
+    "Current environment" server (https://api.openstock.sh).
+deprecation:
+  policy_url: null
+  sunset_header: null
+  note: No public deprecation policy or Sunset/Deprecation header support was found.
+sla:
+  url: null
+  uptime_target: null
+health_check:
+  url: https://api.openstock.sh/health
+  note: A GET /health endpoint reports {ok, environment} for liveness.
+status_page: null
+deprecated_operations: []
+notes: >-
+  OpenStock is a young, partner-access API (developer access is request-gated).
+  No dedicated status page, changelog, roadmap, or formal deprecation policy is
+  published yet; the /health endpoint is the only lifecycle/liveness signal.

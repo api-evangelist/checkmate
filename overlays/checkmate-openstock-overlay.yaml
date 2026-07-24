@@ -1,0 +1,63 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for OpenStock by Checkmate
+  version: 1.0.0
+extends: openapi/checkmate-openstock-openapi-original.json
+x-generated: '2026-07-18'
+x-method: generated
+x-source: derived from openapi/checkmate-openstock-openapi-original.json
+actions:
+- target: $.info
+  update:
+    x-apievangelist-rating: 4
+    x-apievangelist-note: >-
+      Clean OpenAPI 3.1.0 with batched POST endpoints and fully-required
+      response schemas. Enhancement opportunities: declare a
+      components.securitySchemes bearer scheme (auth is prose-only), add
+      operationIds, and tags.
+- target: $
+  update:
+    x-agentic-access:
+      list_brands:
+        action-class: read
+        consequence: read
+        token-ttl-max: 3600
+      generate_code:
+        action-class: acting
+        consequence: write
+        token-ttl-max: 900
+        audit: required
+        note: >-
+          Minting a working, merchant-backed discount code is a state-changing,
+          revenue-affecting action; treat as a write with audit.
+- target: $
+  update:
+    x-securitySchemes-recommended:
+      bearerApiKey:
+        type: http
+        scheme: bearer
+        description: 'Partner API key: Authorization: Bearer <api_key>'
+- target: $.paths./v1/merchants/search.post
+  update:
+    operationId: searchMerchants
+    tags:
+    - Merchants
+    x-apievangelist-idempotent: false
+- target: $.paths./v1/merchants/codes.post
+  update:
+    operationId: getMerchantCodes
+    tags:
+    - Offers
+    x-apievangelist-idempotent: true
+    x-apievangelist-note: Requires an idempotency_key on each query (per the 400 response).
+- target: $.paths./v1/shoppers/history.post
+  update:
+    operationId: getShopperHistory
+    tags:
+    - Shoppers
+    x-apievangelist-note: Shoppers are keyed by email_sha256 (privacy-preserving hash).
+- target: $.paths./health.get
+  update:
+    operationId: healthCheck
+    tags:
+    - System

@@ -1,0 +1,54 @@
+generated: '2026-07-18'
+method: derived
+source: openapi/checkmate-openstock-openapi-original.json + https://api.openstock.sh/docs
+authentication:
+  style: http-bearer
+  header: Authorization
+  format: 'Authorization: Bearer <api_key>'
+  ref: authentication/checkmate-authentication.yml
+request_shape:
+  style: batched-post
+  note: >-
+    Every endpoint is POST with a batched request/response shape. A request
+    carries a `queries` array; the response carries a parallel `results` array,
+    one result per query, in order. This lets a single call fan out across many
+    merchants or shoppers.
+  caps:
+    /v1/merchants/search: 50 queries per request
+    /v1/merchants/codes: 20 queries per request
+    /v1/shoppers/history: 20 queries per request
+idempotency:
+  supported: true
+  mechanism: per-query idempotency_key field
+  scope: /v1/merchants/codes
+  detail: >-
+    The /v1/merchants/codes endpoint requires an `idempotency_key` on each query;
+    a 400 VALIDATION_ERROR is returned when it is missing. This makes code
+    generation / minting safe to retry without duplicating side effects.
+  note: >-
+    Idempotency is a per-query field on the codes (minting) endpoint rather than
+    a request-wide Idempotency-Key header. Search and shopper-history reads do
+    not require it.
+pagination:
+  style: none
+  note: >-
+    No cursor/offset pagination — reads are batched by query with per-query
+    `limit` (e.g. merchant name search accepts limit > 1 to return multiple
+    candidate items). Misses are represented in-band (id:null, empty items[]).
+privacy:
+  shopper_identifier: email_sha256
+  note: >-
+    Shopper history is keyed by a SHA-256 hash of the shopper email
+    (`email_sha256`), never a raw email — a privacy-preserving lookup key.
+rate_limiting:
+  style: per-partner
+  signal: HTTP 429
+  note: Limits are set per partner; a 429 indicates the partner limit was exceeded.
+error_envelope:
+  shape: '{ "error": { "code": string, "message": string } }'
+  format: custom (not RFC 9457)
+  ref: errors/checkmate-problem-types.yml
+versioning:
+  scheme: uri-path
+  current: v1
+  ref: lifecycle/checkmate-lifecycle.yml

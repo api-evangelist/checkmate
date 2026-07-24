@@ -1,0 +1,42 @@
+# Checkmate — OpenStock
+
+> Checkmate is a shopping intelligence and data company. Its OpenStock product is a commerce API and Model Context Protocol (MCP) server that exposes the entire Checkmate network of 284,000+ merchants through a single endpoint — letting AI agents and applications discover merchants, pull live catalogues and offers, generate real merchant-backed discount codes, check availability, and attribute orders. Backed by GV (Google Ventures). Authenticate with a partner-issued `Authorization: Bearer <api_key>`.
+
+## APIs
+
+- [OpenStock API](https://openstock.sh): Batched POST commerce API — merchant search, merchant offer codes, and shopper purchase history. Base URL https://api.openstock.sh
+- [OpenStock MCP server](https://openstock.sh): Native Model Context Protocol server at https://mcp.joincheckmate.com exposing list_brands, get_catalogue, search_offers, generate_code, check_availability, attribute_order
+
+## Specs
+
+- [OpenAPI 3.1 (raw)](https://api.openstock.sh/openapi.json)
+- [OpenAPI (repo copy)](openapi/checkmate-openstock-openapi-original.json)
+- [MCP manifest](mcp/checkmate-mcp.yml)
+- [Overlay](overlays/checkmate-openstock-overlay.yaml)
+
+## Endpoints
+
+- POST /v1/merchants/search — Batch merchant search (max 50 queries); misses return id:null
+- POST /v1/merchants/codes — Batch merchant offer/discount codes (max 20 queries; requires idempotency_key)
+- POST /v1/shoppers/history — Batch shopper purchase history keyed by email_sha256 (max 20 queries)
+- GET /health — Liveness
+
+## Docs
+
+- [Developer portal](https://openstock.sh)
+- [API docs](https://api.openstock.sh/docs)
+- [Authentication](authentication/checkmate-authentication.yml)
+- [Conventions (batching, idempotency, privacy)](conventions/checkmate-conventions.yml)
+- [Error catalog](errors/checkmate-problem-types.yml)
+- [Data model](data-model/checkmate-data-model.yml)
+- [Security policy](https://joincheckmate.com/security)
+- [security.txt](well-known/checkmate-security.txt)
+
+## Company
+
+- [Checkmate (consumers)](https://joincheckmate.com)
+- [Mate (brands)](https://usemate.ai)
+- [Checkmate Intelligence](https://c.inc)
+- [Blog](https://joincheckmate.com/blog)
+- [Privacy Policy](https://joincheckmate.com/privacy-policy)
+- [Terms of Service](https://joincheckmate.com/terms-conditions)

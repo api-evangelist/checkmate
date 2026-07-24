@@ -1,0 +1,20 @@
+generated: '2026-07-18'
+method: generated
+source: openapi/checkmate-openstock-openapi-original.json + conventions/checkmate-conventions.yml
+api: openapi/checkmate-openstock-openapi-original.json
+skills:
+- file: checkmate-find-and-mint-code.md
+  name: Find a merchant and mint a working discount code
+  api: openapi/checkmate-openstock-openapi-original.json
+  operations:
+  - 'POST /v1/merchants/search'
+  - 'POST /v1/merchants/codes'
+- file: checkmate-shopper-history.md
+  name: Look up a shopper's merchant history
+  api: openapi/checkmate-openstock-openapi-original.json
+  operations:
+  - 'POST /v1/shoppers/history'
+notes: >-
+  The OpenStock OpenAPI declares no operationIds; skills are grounded in the
+  real HTTP method+path of each endpoint (verified against the spec). The MCP
+  server exposes a broader tool surface (see mcp/checkmate-mcp.yml).

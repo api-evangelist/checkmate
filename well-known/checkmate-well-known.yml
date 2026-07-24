@@ -1,0 +1,25 @@
+generated: '2026-07-18'
+method: searched
+source: live probes of /.well-known/ on Checkmate + OpenStock hosts
+hosts:
+- host: https://joincheckmate.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 200
+    file: checkmate-security.txt
+- host: https://api.openstock.sh
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+notes: >-
+  Only joincheckmate.com publishes a /.well-known/security.txt (RFC 9116). The
+  API host api.openstock.sh exposes an OpenAPI at /openapi.json and interactive
+  docs at /docs but no /.well-known discovery documents. No OpenID/OAuth
+  discovery is published because OpenStock authenticates with partner-issued
+  bearer API keys rather than OAuth.

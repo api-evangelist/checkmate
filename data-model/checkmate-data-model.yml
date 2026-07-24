@@ -1,0 +1,61 @@
+generated: '2026-07-18'
+method: derived
+source: openapi/checkmate-openstock-openapi-original.json (components.schemas)
+entities:
+- name: Merchant
+  key: id
+  id_example: 01hz4vdrcnxhfmfcvy3rfqk1fp
+  id_format: Checkmate merchant ID (ULID-like)
+  fields:
+  - id
+  - name
+  - domains[]
+  - estimated_shipping
+  source_schema: MerchantSearchItem
+  returned_by: 'POST /v1/merchants/search'
+- name: OfferCode
+  key: code
+  fields:
+  - code
+  - probability
+  - single_use
+  - value_type (percent|fixed|free_shipping|unknown)
+  - value_amount
+  - currency
+  - conditions[]
+  - redirect_url
+  - expires_at
+  - last_success
+  - description
+  - apply_count
+  - success_count
+  source_schema: OfferCode
+  returned_by: 'POST /v1/merchants/codes'
+- name: ShopperActivity
+  key: merchant_id
+  fields:
+  - merchant_id
+  - merchant_name
+  - type (visited|purchased)
+  source_schema: ShopperActivity
+  returned_by: 'POST /v1/shoppers/history'
+- name: Shopper
+  key: email_sha256
+  note: Identified only by a SHA-256 hash of email; no first-class shopper resource is returned.
+relationships:
+- from: OfferCode
+  to: Merchant
+  type: belongs_to
+  via: query merchant (codes are requested per merchant query)
+- from: ShopperActivity
+  to: Merchant
+  type: belongs_to
+  via: merchant_id
+- from: Shopper
+  to: ShopperActivity
+  type: has_many
+  via: email_sha256 lookup returns a shopper's merchant interactions
+notes: >-
+  Schemas nest via a batched results[] -> items[] envelope on each endpoint;
+  the entities above are the leaf item shapes. Merchant is the hub entity that
+  both OfferCode and ShopperActivity reference.

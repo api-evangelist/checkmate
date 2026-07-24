@@ -1,0 +1,18 @@
+{
+  "provider": "checkmate",
+  "sources": [
+    "checkmate-health-api-openapi.yml",
+    "checkmate-merchants-api-openapi.yml",
+    "checkmate-shoppers-api-openapi.yml"
+  ],
+  "outputs": [
+    "checkmate-health-api-openapi.yml",
+    "checkmate-merchants-api-openapi.yml",
+    "checkmate-shoppers-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [],
+  "skipped": []
+}

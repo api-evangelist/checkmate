@@ -1,0 +1,6 @@
+Contact: mailto:security@joincheckmate.com
+Expires: 2038-01-19T03:14:00Z
+Hiring: https://c.inc/careers
+Policy: https://joincheckmate.com/security
+Policy: https://joincheckmate.com/terms-conditions
+Preferred-Languages: en
