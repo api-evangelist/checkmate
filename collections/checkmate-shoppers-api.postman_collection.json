@@ -1,0 +1,261 @@
+{
+  "item": [
+    {
+      "id": "09064e98-6d46-42ad-82ea-30f83818dc68",
+      "name": "Shoppers",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "09bd0d08-4ea0-4d62-8de7-082414506c5e",
+          "name": "Batch shopper purchase history",
+          "request": {
+            "name": "Batch shopper purchase history",
+            "description": {
+              "content": "Look up purchase history for one or more shoppers identified by SHA-256 hash of their normalised (lowercase-trimmed) email address. Never send raw email addresses. Up to 20 queries per request. Each result contains a flat `items` array of merchant interactions; unknown shoppers return an empty `items` array — there are no 404s.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "shoppers",
+                "history"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"queries\": [\n    {\n      \"query_id\": \"<string>\",\n      \"email_sha256\": \"<string>\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "fe903114-a5e1-45c4-8936-9ba3e13c198c",
+              "name": "Per-query shopper history. Each result has a flat `items` array of merchant interactions. Unknown shoppers return an empty array.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "shoppers",
+                    "history"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"queries\": [\n    {\n      \"query_id\": \"q1\",\n      \"email_sha256\": \"b94d27b9934d3e08a52e52d7da7dabfac484efe04294e576e50e46a7d3f5a4b8\"\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"results\": [\n    {\n      \"query_id\": \"q1\",\n      \"items\": [\n        {\n          \"merchant_id\": \"01hz4vdrcnxhfmfcvy3rfqk1fp\",\n          \"merchant_name\": \"Acme Corp\",\n          \"type\": \"purchased\"\n        },\n        {\n          \"merchant_id\": \"01hz4vdrcnxhfmfcvy3rfqk1fp\",\n          \"merchant_name\": \"Acme Corp\",\n          \"type\": \"purchased\"\n        }\n      ]\n    },\n    {\n      \"query_id\": \"q1\",\n      \"items\": [\n        {\n          \"merchant_id\": \"01hz4vdrcnxhfmfcvy3rfqk1fp\",\n          \"merchant_name\": \"Acme Corp\",\n          \"type\": \"purchased\"\n        },\n        {\n          \"merchant_id\": \"01hz4vdrcnxhfmfcvy3rfqk1fp\",\n          \"merchant_name\": \"Acme Corp\",\n          \"type\": \"purchased\"\n        }\n      ]\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "06ef2875-3f57-4228-8762-f3d2762c7794",
+              "name": "Invalid request body, malformed email_sha256, or query cap exceeded (max 20)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "shoppers",
+                    "history"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"queries\": [\n    {\n      \"query_id\": \"q1\",\n      \"email_sha256\": \"b94d27b9934d3e08a52e52d7da7dabfac484efe04294e576e50e46a7d3f5a4b8\"\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"VALIDATION_ERROR\",\n    \"message\": \"Request body is invalid\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "62889a38-896e-4cd5-892e-2d61cf71781a",
+              "name": "Missing or invalid API key",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "shoppers",
+                    "history"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"queries\": [\n    {\n      \"query_id\": \"q1\",\n      \"email_sha256\": \"b94d27b9934d3e08a52e52d7da7dabfac484efe04294e576e50e46a7d3f5a4b8\"\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"VALIDATION_ERROR\",\n    \"message\": \"Request body is invalid\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "cfbe6241-7bb6-4cb2-89b3-c0bb7b59c5d2",
+              "name": "Too many requests. Rate limits are determined on a per partner basis.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "shoppers",
+                    "history"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"queries\": [\n    {\n      \"query_id\": \"q1\",\n      \"email_sha256\": \"b94d27b9934d3e08a52e52d7da7dabfac484efe04294e576e50e46a7d3f5a4b8\"\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"VALIDATION_ERROR\",\n    \"message\": \"Request body is invalid\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.openstock.sh",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "4966a738-6f04-429c-8521-00dc8336ea6c",
+    "name": "OpenStock Health Shoppers API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "API provided by Checkmate to partners to provide access to merchant codes and shopper purchase history. All endpoints are POST with batched request/response shapes. Authenticate with `Authorization: Bearer <api_key>`. Ask partner representative for the API key.",
+      "type": "text/plain"
+    }
+  }
+}

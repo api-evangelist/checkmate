@@ -1,0 +1,33 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "OpenStock Health Shoppers API",
+    "version": "1.0.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Shoppers",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Batch shopper purchase history",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.openstock.sh/v1/shoppers/history",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Look up purchase history for one or more shoppers identified by SHA-256 hash of their normalised (lowercase-trimmed) email address. Never send raw email addresses. Up to 20 queries per request. Each result contains a flat `items` array of merchant interactions; unknown shoppers return an empty `items` array — there are no 404s."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

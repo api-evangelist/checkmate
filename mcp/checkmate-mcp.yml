@@ -12,38 +12,46 @@ server:
     scheme: bearer
     header: Authorization
     format: 'Authorization: Bearer ${KEY}'
-  description: >-
-    OpenStock by Checkmate — "the world's largest MCP for ecommerce." A single
-    Model Context Protocol server that exposes catalogues, offers, and
-    merchant-backed discount-code generation across the entire Checkmate network
-    of 284,000+ merchants through one endpoint. Speaks MCP natively and works
-    out of the box with any MCP-compatible client (Claude, ChatGPT, Cursor,
-    custom agents). Requires partner developer access.
+  description: OpenStock by Checkmate — "the world's largest MCP for ecommerce." A single Model Context
+    Protocol server that exposes catalogues, offers, and merchant-backed discount-code generation across
+    the entire Checkmate network of 284,000+ merchants through one endpoint. Speaks MCP natively and works
+    out of the box with any MCP-compatible client (Claude, ChatGPT, Cursor, custom agents). Requires partner
+    developer access.
   client_config:
     mcpServers:
       openstock:
         url: https://mcp.joincheckmate.com
         headers:
-          Authorization: 'Bearer ${KEY}'
+          Authorization: Bearer ${KEY}
 tools:
 - name: list_brands
-  description: Browse the network — discover 284,000+ live merchants across beauty, apparel, wellness, home and more behind a single connection.
-  related_operation: 'POST /v1/merchants/search'
+  description: Browse the network — discover 284,000+ live merchants across beauty, apparel, wellness,
+    home and more behind a single connection.
+  related_operation: POST /v1/merchants/search
 - name: get_catalogue
-  description: Pull live catalogues — read structured product data, variants, imagery and inventory directly from the source, kept fresh in real time.
+  description: Pull live catalogues — read structured product data, variants, imagery and inventory directly
+    from the source, kept fresh in real time.
 - name: search_offers
-  description: Surface live offers — query active promotions and best available pricing across the entire network in a single call.
-  related_operation: 'POST /v1/merchants/codes'
+  description: Surface live offers — query active promotions and best available pricing across the entire
+    network in a single call.
+  related_operation: POST /v1/merchants/codes
 - name: generate_code
   description: Generate real merchant-backed discount codes on demand.
-  related_operation: 'POST /v1/merchants/codes'
+  related_operation: POST /v1/merchants/codes
 - name: check_availability
   description: Confirm availability — validate stock and eligibility before an agent recommends a product.
 - name: attribute_order
   description: Attribute and convert — close the loop with clean attribution back to the merchant.
-notes: >-
-  The six MCP tools above are the vendor-published toolset advertised on
-  openstock.sh. The related_operation notes map tools to the closest REST
-  operation in openapi/checkmate-openstock-openapi-original.json; the MCP
-  surface is broader than the currently published REST endpoints
-  (which cover /v1/merchants/search, /v1/merchants/codes, /v1/shoppers/history).
+notes: The six MCP tools above are the vendor-published toolset advertised on openstock.sh. The related_operation
+  notes map tools to the closest REST operation in openapi/checkmate-openstock-openapi-original.json;
+  the MCP surface is broader than the currently published REST endpoints (which cover /v1/merchants/search,
+  /v1/merchants/codes, /v1/shoppers/history).
+deployment:
+  mode: none
+  endpoint: https://mcp.joincheckmate.com
+  verified: probed
+  probe: dead
+  note: the endpoint this manifest claimed did not answer; recorded as none rather than deleted so the
+    claim stays auditable
+  checked: '2026-08-12'
+  source: catalog MCP census

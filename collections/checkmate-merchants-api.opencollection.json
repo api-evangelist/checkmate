@@ -1,0 +1,48 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "OpenStock Health Merchants API",
+    "version": "1.0.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Merchants",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Batch merchant search",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.openstock.sh/v1/merchants/search",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Search for merchants by name (fuzzy) or domain (exact match). Up to 20 queries per request. Each query carries its own `query_id` that is echoed back so callers can correlate responses. Each result contains an `items` array with matched merchants. Name queries return up to `limit` items per result (default 5, max 20). Misses return a single item with `id: null` — there are no 404s."
+        },
+        {
+          "info": {
+            "name": "Batch merchant offer codes",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.openstock.sh/v1/merchants/codes",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Retrieve ranked offer codes for a set of merchants. Up to 20 queries per request. Each result contains an `items` array of codes; misses return an empty `items` array. Add an `idempotency_key` to deduplicate requests; we suggest using `sha256(user_email + date)` or similar."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}
