@@ -1,9 +1,7 @@
 {
   "provider": "checkmate",
   "sources": [
-    "checkmate-health-api-openapi.yml",
-    "checkmate-merchants-api-openapi.yml",
-    "checkmate-shoppers-api-openapi.yml"
+    "_original/checkmate-openstock-openapi-original.json"
   ],
   "outputs": [
     "checkmate-health-api-openapi.yml",
@@ -13,6 +11,17 @@
   "archived": [],
   "errors": [],
   "warnings": [],
-  "notes": [],
-  "skipped": []
+  "notes": [
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "checkmate-openstock-openapi-original.json: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "checkmate-openstock-openapi-original.json: declared missing tag: Health",
+    "checkmate-openstock-openapi-original.json: declared missing tag: Merchants",
+    "checkmate-openstock-openapi-original.json: declared missing tag: Shoppers",
+    "apis.yml register: already-registered"
+  ],
+  "skipped": [
+    "checkmate-health-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "checkmate-merchants-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "checkmate-shoppers-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
 }

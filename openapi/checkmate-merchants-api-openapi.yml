@@ -1,8 +1,8 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
   version: 1.0.0
-  title: OpenStock Health Merchants API
-  description: 'API provided by Checkmate to partners to provide access to merchant codes and shopper purchase history. All endpoints are POST with batched request/response shapes. Authenticate with `Authorization: Bearer <api_key>`. Ask partner representative for the API key.'
+  title: OpenStock Merchants API
+  description: 'API provided by Checkmate to partners to provide access to merchant codes and shopper purchase history. All endpoints are POST with batched request/response shapes. Authenticate with `Authorization: Bearer `. Ask partner representative for the API key.'
 servers:
 - url: https://api.openstock.sh
   description: Current environment
@@ -48,6 +48,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+      operationId: postV1MerchantsSearch
+      x-operation-id-source: derived
   /v1/merchants/codes:
     post:
       tags:
@@ -87,30 +89,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+      operationId: postV1MerchantsCodes
+      x-operation-id-source: derived
 components:
   schemas:
-    MerchantCodesQuery:
+    MerchantCodesResponse:
       type: object
       properties:
-        query_id:
-          type: string
-          minLength: 1
-          example: q1
-          description: Caller-supplied opaque identifier correlated back in results
-        merchant_id:
-          type: string
-          minLength: 1
-          example: 01hz4vdrcnxhfmfcvy3rfqk1fp
-          description: Checkmate merchant ID obtained from the search endpoint
-        idempotency_key:
-          type: string
-          minLength: 1
-          example: a3f1e2d4b5c6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2
-          description: Deduplication key for this query. We suggest using `sha256(user_email + date)` or similar.
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/MerchantCodesResult'
       required:
-      - query_id
-      - merchant_id
-      - idempotency_key
+      - results
     MerchantSearchItem:
       type: object
       properties:
@@ -141,13 +132,13 @@ components:
       - name
       - domains
       - estimated_shipping
-    MerchantCodesResponse:
+    MerchantSearchResponse:
       type: object
       properties:
         results:
           type: array
           items:
-            $ref: '#/components/schemas/MerchantCodesResult'
+            $ref: '#/components/schemas/MerchantSearchResult'
       required:
       - results
     EstimatedShipping:
@@ -183,82 +174,21 @@ components:
       - q1
       - q3
       description: Estimated shipping time statistics, or null when unknown
-    MerchantSearchRequest:
-      type: object
-      properties:
-        queries:
-          type: array
-          items:
-            $ref: '#/components/schemas/MerchantSearchQuery'
-          minItems: 1
-          maxItems: 50
-          description: Batch of search queries (1–50). Each query returns a result with an `items` array. Name queries with `limit > 1` may yield multiple items. Misses return an `items` array with a single entry where `id` is null.
-      required:
-      - queries
-    MerchantSearchQuery:
+    MerchantSearchResult:
       type: object
       properties:
         query_id:
           type: string
-          minLength: 1
           example: q1
-          description: Caller-supplied opaque identifier correlated back in results
-        type:
-          type: string
-          enum:
-          - name
-          - domain
-          example: name
-          description: '"name" triggers fuzzy search; "domain" is an exact-match lookup'
-        value:
-          type: string
-          minLength: 1
-          example: Acme
-          description: 'Search term: merchant name fragment or bare domain'
-        region:
-          type: string
-          example: US
-          description: Optional ISO 3166-1 alpha-2 region filter (name queries only)
-        limit:
-          type: integer
-          minimum: 1
-          maximum: 20
-          default: 5
-          example: 5
-          description: Maximum number of results to return for this query (name queries only, domain queries always return at most one result). Defaults to 5.
-      required:
-      - query_id
-      - type
-      - value
-    MerchantCodesRequest:
-      type: object
-      properties:
-        queries:
+        items:
           type: array
           items:
-            $ref: '#/components/schemas/MerchantCodesQuery'
+            $ref: '#/components/schemas/MerchantSearchItem'
           minItems: 1
-          maxItems: 20
-          description: Batch of codes queries (1–20)
+          description: 'Matched merchants for this query. Always contains at least one entry. Misses return a single entry with `id: null`; name queries with `limit > 1` may return multiple entries.'
       required:
-      - queries
-    ErrorResponse:
-      type: object
-      properties:
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-              example: VALIDATION_ERROR
-            message:
-              type: string
-              example: Request body is invalid
-          required:
-          - code
-          - message
-      required:
-      - error
+      - query_id
+      - items
     OfferCode:
       type: object
       properties:
@@ -356,30 +286,70 @@ components:
       - description
       - apply_count
       - success_count
-    MerchantSearchResponse:
+    ErrorResponse:
       type: object
       properties:
-        results:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              example: VALIDATION_ERROR
+            message:
+              type: string
+              example: Request body is invalid
+          required:
+          - code
+          - message
+      required:
+      - error
+    MerchantSearchRequest:
+      type: object
+      properties:
+        queries:
           type: array
           items:
-            $ref: '#/components/schemas/MerchantSearchResult'
+            $ref: '#/components/schemas/MerchantSearchQuery'
+          minItems: 1
+          maxItems: 50
+          description: Batch of search queries (1–50). Each query returns a result with an `items` array. Name queries with `limit > 1` may yield multiple items. Misses return an `items` array with a single entry where `id` is null.
       required:
-      - results
-    MerchantSearchResult:
+      - queries
+    MerchantSearchQuery:
       type: object
       properties:
         query_id:
           type: string
+          minLength: 1
           example: q1
-        items:
-          type: array
-          items:
-            $ref: '#/components/schemas/MerchantSearchItem'
-          minItems: 1
-          description: 'Matched merchants for this query. Always contains at least one entry. Misses return a single entry with `id: null`; name queries with `limit > 1` may return multiple entries.'
+          description: Caller-supplied opaque identifier correlated back in results
+        type:
+          type: string
+          enum:
+          - name
+          - domain
+          example: name
+          description: '"name" triggers fuzzy search; "domain" is an exact-match lookup'
+        value:
+          type: string
+          minLength: 1
+          example: Acme
+          description: 'Search term: merchant name fragment or bare domain'
+        region:
+          type: string
+          example: US
+          description: Optional ISO 3166-1 alpha-2 region filter (name queries only)
+        limit:
+          type: integer
+          minimum: 1
+          maximum: 20
+          default: 5
+          example: 5
+          description: Maximum number of results to return for this query (name queries only, domain queries always return at most one result). Defaults to 5.
       required:
       - query_id
-      - items
+      - type
+      - value
     MerchantCodesResult:
       type: object
       properties:
@@ -394,3 +364,37 @@ components:
       required:
       - query_id
       - items
+    MerchantCodesRequest:
+      type: object
+      properties:
+        queries:
+          type: array
+          items:
+            $ref: '#/components/schemas/MerchantCodesQuery'
+          minItems: 1
+          maxItems: 20
+          description: Batch of codes queries (1–20)
+      required:
+      - queries
+    MerchantCodesQuery:
+      type: object
+      properties:
+        query_id:
+          type: string
+          minLength: 1
+          example: q1
+          description: Caller-supplied opaque identifier correlated back in results
+        merchant_id:
+          type: string
+          minLength: 1
+          example: 01hz4vdrcnxhfmfcvy3rfqk1fp
+          description: Checkmate merchant ID obtained from the search endpoint
+        idempotency_key:
+          type: string
+          minLength: 1
+          example: a3f1e2d4b5c6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2
+          description: Deduplication key for this query. We suggest using `sha256(user_email + date)` or similar.
+      required:
+      - query_id
+      - merchant_id
+      - idempotency_key

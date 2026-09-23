@@ -1,8 +1,8 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
   version: 1.0.0
-  title: OpenStock Health Shoppers API
-  description: 'API provided by Checkmate to partners to provide access to merchant codes and shopper purchase history. All endpoints are POST with batched request/response shapes. Authenticate with `Authorization: Bearer <api_key>`. Ask partner representative for the API key.'
+  title: OpenStock Shoppers API
+  description: 'API provided by Checkmate to partners to provide access to merchant codes and shopper purchase history. All endpoints are POST with batched request/response shapes. Authenticate with `Authorization: Bearer `. Ask partner representative for the API key.'
 servers:
 - url: https://api.openstock.sh
   description: Current environment
@@ -48,43 +48,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+      operationId: postV1ShoppersHistory
+      x-operation-id-source: derived
 components:
   schemas:
-    ShopperHistoryResult:
-      type: object
-      properties:
-        query_id:
-          type: string
-          example: q1
-        items:
-          type: array
-          items:
-            $ref: '#/components/schemas/ShopperActivity'
-          description: Flat list of merchant interactions for this shopper. Empty array when the shopper is unknown.
-      required:
-      - query_id
-      - items
-    ShopperHistoryRequest:
-      type: object
-      properties:
-        queries:
-          type: array
-          items:
-            $ref: '#/components/schemas/ShopperHistoryQuery'
-          minItems: 1
-          maxItems: 20
-          description: Batch of shopper-history queries (1–20)
-      required:
-      - queries
-    ShopperHistoryResponse:
-      type: object
-      properties:
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/ShopperHistoryResult'
-      required:
-      - results
     ShopperHistoryQuery:
       type: object
       properties:
@@ -118,6 +85,41 @@ components:
           - message
       required:
       - error
+    ShopperHistoryResponse:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ShopperHistoryResult'
+      required:
+      - results
+    ShopperHistoryResult:
+      type: object
+      properties:
+        query_id:
+          type: string
+          example: q1
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ShopperActivity'
+          description: Flat list of merchant interactions for this shopper. Empty array when the shopper is unknown.
+      required:
+      - query_id
+      - items
+    ShopperHistoryRequest:
+      type: object
+      properties:
+        queries:
+          type: array
+          items:
+            $ref: '#/components/schemas/ShopperHistoryQuery'
+          minItems: 1
+          maxItems: 20
+          description: Batch of shopper-history queries (1–20)
+      required:
+      - queries
     ShopperActivity:
       type: object
       properties:
