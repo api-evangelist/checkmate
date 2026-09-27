@@ -52,22 +52,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    ShopperHistoryQuery:
-      type: object
-      properties:
-        query_id:
-          type: string
-          minLength: 1
-          example: q1
-          description: Caller-supplied opaque identifier correlated back in results
-        email_sha256:
-          type: string
-          pattern: ^[0-9a-f]{64}$
-          example: b94d27b9934d3e08a52e52d7da7dabfac484efe04294e576e50e46a7d3f5a4b8
-          description: SHA-256 of the lowercase-trimmed email address; never send the raw email
-      required:
-      - query_id
-      - email_sha256
     ErrorResponse:
       type: object
       properties:
@@ -85,15 +69,34 @@ components:
           - message
       required:
       - error
-    ShopperHistoryResponse:
+    ShopperHistoryQuery:
       type: object
       properties:
-        results:
+        query_id:
+          type: string
+          minLength: 1
+          example: q1
+          description: Caller-supplied opaque identifier correlated back in results
+        email_sha256:
+          type: string
+          pattern: ^[0-9a-f]{64}$
+          example: b94d27b9934d3e08a52e52d7da7dabfac484efe04294e576e50e46a7d3f5a4b8
+          description: SHA-256 of the lowercase-trimmed email address; never send the raw email
+      required:
+      - query_id
+      - email_sha256
+    ShopperHistoryRequest:
+      type: object
+      properties:
+        queries:
           type: array
           items:
-            $ref: '#/components/schemas/ShopperHistoryResult'
+            $ref: '#/components/schemas/ShopperHistoryQuery'
+          minItems: 1
+          maxItems: 20
+          description: Batch of shopper-history queries (1–20)
       required:
-      - results
+      - queries
     ShopperHistoryResult:
       type: object
       properties:
@@ -108,18 +111,15 @@ components:
       required:
       - query_id
       - items
-    ShopperHistoryRequest:
+    ShopperHistoryResponse:
       type: object
       properties:
-        queries:
+        results:
           type: array
           items:
-            $ref: '#/components/schemas/ShopperHistoryQuery'
-          minItems: 1
-          maxItems: 20
-          description: Batch of shopper-history queries (1–20)
+            $ref: '#/components/schemas/ShopperHistoryResult'
       required:
-      - queries
+      - results
     ShopperActivity:
       type: object
       properties:
