@@ -93,6 +93,73 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    MerchantSearchResult:
+      type: object
+      properties:
+        query_id:
+          type: string
+          example: q1
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/MerchantSearchItem'
+          minItems: 1
+          description: 'Matched merchants for this query. Always contains at least one entry. Misses return a single entry with `id: null`; name queries with `limit > 1` may return multiple entries.'
+      required:
+      - query_id
+      - items
+    MerchantCodesQuery:
+      type: object
+      properties:
+        query_id:
+          type: string
+          minLength: 1
+          example: q1
+          description: Caller-supplied opaque identifier correlated back in results
+        merchant_id:
+          type: string
+          minLength: 1
+          example: 01hz4vdrcnxhfmfcvy3rfqk1fp
+          description: Checkmate merchant ID obtained from the search endpoint
+        idempotency_key:
+          type: string
+          minLength: 1
+          example: a3f1e2d4b5c6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2
+          description: Deduplication key for this query. We suggest using `sha256(user_email + date)` or similar.
+      required:
+      - query_id
+      - merchant_id
+      - idempotency_key
+    MerchantCodesResponse:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/MerchantCodesResult'
+      required:
+      - results
+    MerchantSearchResponse:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/MerchantSearchResult'
+      required:
+      - results
+    MerchantSearchRequest:
+      type: object
+      properties:
+        queries:
+          type: array
+          items:
+            $ref: '#/components/schemas/MerchantSearchQuery'
+          minItems: 1
+          maxItems: 50
+          description: Batch of search queries (1–50). Each query returns a result with an `items` array. Name queries with `limit > 1` may yield multiple items. Misses return an `items` array with a single entry where `id` is null.
+      required:
+      - queries
     MerchantSearchQuery:
       type: object
       properties:
@@ -128,83 +195,6 @@ components:
       - query_id
       - type
       - value
-    ErrorResponse:
-      type: object
-      properties:
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-              example: VALIDATION_ERROR
-            message:
-              type: string
-              example: Request body is invalid
-          required:
-          - code
-          - message
-      required:
-      - error
-    MerchantCodesResponse:
-      type: object
-      properties:
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/MerchantCodesResult'
-      required:
-      - results
-    MerchantSearchItem:
-      type: object
-      properties:
-        id:
-          type:
-          - string
-          - 'null'
-          example: 01hz4vdrcnxhfmfcvy3rfqk1fp
-          description: Checkmate merchant ID, or null when not found
-        name:
-          type:
-          - string
-          - 'null'
-          example: Acme Corp
-          description: Merchant display name, or null when no match
-        domains:
-          type: array
-          items:
-            type: string
-          example:
-          - acme.com
-          - acme.co.uk
-          description: Merchant domains
-        estimated_shipping:
-          $ref: '#/components/schemas/EstimatedShipping'
-      required:
-      - id
-      - name
-      - domains
-      - estimated_shipping
-    MerchantSearchRequest:
-      type: object
-      properties:
-        queries:
-          type: array
-          items:
-            $ref: '#/components/schemas/MerchantSearchQuery'
-          minItems: 1
-          maxItems: 50
-          description: Batch of search queries (1–50). Each query returns a result with an `items` array. Name queries with `limit > 1` may yield multiple items. Misses return an `items` array with a single entry where `id` is null.
-      required:
-      - queries
-    MerchantSearchResponse:
-      type: object
-      properties:
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/MerchantSearchResult'
-      required:
-      - results
     MerchantCodesResult:
       type: object
       properties:
@@ -219,54 +209,6 @@ components:
       required:
       - query_id
       - items
-    MerchantSearchResult:
-      type: object
-      properties:
-        query_id:
-          type: string
-          example: q1
-        items:
-          type: array
-          items:
-            $ref: '#/components/schemas/MerchantSearchItem'
-          minItems: 1
-          description: 'Matched merchants for this query. Always contains at least one entry. Misses return a single entry with `id: null`; name queries with `limit > 1` may return multiple entries.'
-      required:
-      - query_id
-      - items
-    EstimatedShipping:
-      type:
-      - object
-      - 'null'
-      properties:
-        unit:
-          type: string
-          enum:
-          - days
-          example: days
-          description: Unit for all shipping time values in this object
-        median:
-          type: number
-          example: 6
-          description: Median days to deliver
-        q1:
-          type:
-          - number
-          - 'null'
-          example: 3
-          description: First quartile (25th percentile) days to deliver, or null when unknown
-        q3:
-          type:
-          - number
-          - 'null'
-          example: 10
-          description: Third quartile (75th percentile) days to deliver, or null when unknown
-      required:
-      - unit
-      - median
-      - q1
-      - q3
-      description: Estimated shipping time statistics, or null when unknown
     OfferCode:
       type: object
       properties:
@@ -364,6 +306,39 @@ components:
       - description
       - apply_count
       - success_count
+    EstimatedShipping:
+      type:
+      - object
+      - 'null'
+      properties:
+        unit:
+          type: string
+          enum:
+          - days
+          example: days
+          description: Unit for all shipping time values in this object
+        median:
+          type: number
+          example: 6
+          description: Median days to deliver
+        q1:
+          type:
+          - number
+          - 'null'
+          example: 3
+          description: First quartile (25th percentile) days to deliver, or null when unknown
+        q3:
+          type:
+          - number
+          - 'null'
+          example: 10
+          description: Third quartile (75th percentile) days to deliver, or null when unknown
+      required:
+      - unit
+      - median
+      - q1
+      - q3
+      description: Estimated shipping time statistics, or null when unknown
     MerchantCodesRequest:
       type: object
       properties:
@@ -376,25 +351,50 @@ components:
           description: Batch of codes queries (1–20)
       required:
       - queries
-    MerchantCodesQuery:
+    ErrorResponse:
       type: object
       properties:
-        query_id:
-          type: string
-          minLength: 1
-          example: q1
-          description: Caller-supplied opaque identifier correlated back in results
-        merchant_id:
-          type: string
-          minLength: 1
-          example: 01hz4vdrcnxhfmfcvy3rfqk1fp
-          description: Checkmate merchant ID obtained from the search endpoint
-        idempotency_key:
-          type: string
-          minLength: 1
-          example: a3f1e2d4b5c6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2
-          description: Deduplication key for this query. We suggest using `sha256(user_email + date)` or similar.
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              example: VALIDATION_ERROR
+            message:
+              type: string
+              example: Request body is invalid
+          required:
+          - code
+          - message
       required:
-      - query_id
-      - merchant_id
-      - idempotency_key
+      - error
+    MerchantSearchItem:
+      type: object
+      properties:
+        id:
+          type:
+          - string
+          - 'null'
+          example: 01hz4vdrcnxhfmfcvy3rfqk1fp
+          description: Checkmate merchant ID, or null when not found
+        name:
+          type:
+          - string
+          - 'null'
+          example: Acme Corp
+          description: Merchant display name, or null when no match
+        domains:
+          type: array
+          items:
+            type: string
+          example:
+          - acme.com
+          - acme.co.uk
+          description: Merchant domains
+        estimated_shipping:
+          $ref: '#/components/schemas/EstimatedShipping'
+      required:
+      - id
+      - name
+      - domains
+      - estimated_shipping
