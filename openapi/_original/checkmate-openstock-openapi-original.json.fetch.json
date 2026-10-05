@@ -1,0 +1,12 @@
+{
+ "url": "https://api.openstock.sh/openapi.json",
+ "requested_url": "https://api.openstock.sh/openapi.json",
+ "status": 200,
+ "content_type": "application/json",
+ "bytes": 35960,
+ "sha256": "1ebb4d887fd078cec3ab53152192fccfbcc7be4d1f6f828eb99d0285b1462035",
+ "fetched_at": "2026-10-04",
+ "fetched_by": "APIEvangelist-Harvest/1.0 (+https://apievangelist.com)",
+ "match": "equivalent",
+ "note": "Re-fetched from the provider by verify-openapi-sources.py; the provider's current document describes the same operations (Jaccard 1.0), but the bytes differ, so the archive is an earlier or reformatted copy."
+}
