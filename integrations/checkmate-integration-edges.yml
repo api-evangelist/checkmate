@@ -1,0 +1,16 @@
+generated: '2026-10-12'
+method: none
+source:
+- https://zapier.com/apps/checkmate/integrations
+- https://n8n.io/integrations/checkmate/
+- https://composio.dev/toolkits/checkmate
+- https://monid.ai/tools/checkmate
+checked:
+- https://composio.dev/toolkits/checkmate
+- https://monid.ai/tools/checkmate
+- https://n8n.io/integrations/checkmate/
+- https://zapier.com/apps/checkmate/integrations
+summary: null
+marketplace_apps: []
+edges: []
+templates: []
