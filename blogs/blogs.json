@@ -2,6 +2,13 @@
   "repo": "checkmate",
   "feeds": [
     {
+      "source": "https://joincheckmate.com/blog",
+      "feed_url": "https://joincheckmate.com/blog",
+      "title": "",
+      "saved": 0,
+      "method": "none"
+    },
+    {
       "source": "https://api.openstock.sh/docs",
       "feed_url": "https://api.openstock.sh/docs",
       "title": "",
@@ -10,5 +17,5 @@
     }
   ],
   "post_count": 0,
-  "fetched": "2026-10-03T12:30:02Z"
+  "fetched": "2026-10-10T13:15:00Z"
 }
