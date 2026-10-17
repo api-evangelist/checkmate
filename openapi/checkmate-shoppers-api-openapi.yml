@@ -77,20 +77,35 @@ components:
             $ref: '#/components/schemas/ShopperHistoryResult'
       required:
       - results
-    ShopperHistoryResult:
+    ShopperHistoryRequest:
       type: object
       properties:
-        query_id:
-          type: string
-          example: q1
-        items:
+        queries:
           type: array
           items:
-            $ref: '#/components/schemas/ShopperActivity'
-          description: Flat list of merchant interactions for this shopper. Empty array when the shopper is unknown.
+            $ref: '#/components/schemas/ShopperHistoryQuery'
+          minItems: 1
+          maxItems: 20
+          description: Batch of shopper-history queries (1–20)
       required:
-      - query_id
-      - items
+      - queries
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              example: VALIDATION_ERROR
+            message:
+              type: string
+              example: Request body is invalid
+          required:
+          - code
+          - message
+      required:
+      - error
     ShopperActivity:
       type: object
       properties:
@@ -112,32 +127,17 @@ components:
       - merchant_id
       - merchant_name
       - type
-    ErrorResponse:
+    ShopperHistoryResult:
       type: object
       properties:
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-              example: VALIDATION_ERROR
-            message:
-              type: string
-              example: Request body is invalid
-          required:
-          - code
-          - message
-      required:
-      - error
-    ShopperHistoryRequest:
-      type: object
-      properties:
-        queries:
+        query_id:
+          type: string
+          example: q1
+        items:
           type: array
           items:
-            $ref: '#/components/schemas/ShopperHistoryQuery'
-          minItems: 1
-          maxItems: 20
-          description: Batch of shopper-history queries (1–20)
+            $ref: '#/components/schemas/ShopperActivity'
+          description: Flat list of merchant interactions for this shopper. Empty array when the shopper is unknown.
       required:
-      - queries
+      - query_id
+      - items
