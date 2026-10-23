@@ -398,3 +398,9 @@ components:
           description: Batch of codes queries (1–20)
       required:
       - queries
+x-provenance:
+  method: harvested
+  publisher: Checkmate
+  source: https://api.openstock.sh/openapi.json
+  note: split by refine-openapis from the provider's own published document, verified by fetch (openapi/_original/*.fetch.json);
+    stamped by stamp-openapi-provenance.py (roadmap#793)
