@@ -64,6 +64,116 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Checkmate is a company surfaced as a portfolio company of gv and added to the API Evangelist network as a stub for enrichment. Sector: consumer. This profile is a lead awaiting the enrichment pipeline.
+Checkmate is a shopping intelligence and data company whose network powers three products: Checkmate for consumers (a browser extension and mobile app that automatically finds the best price and applies working discount codes across 284,000+ merchants for 5M+ monthly shoppers), Mate for brands (AI-powered revenue intelligence), and OpenStock for publishers and agents. OpenStock is a commerce API and Model Context Protocol (MCP) server that exposes the entire Checkmate network through a single endpoint — letting AI agents, shopping copilots, and applications discover merchants, pull live catalogues and offers, generate real merchant-backed discount codes, check availability, and attribute orders. Backed by GV (Google Ventures).
 
-Backed by: gv — https://joincheckmate.com
+**Areas:** Company · Consumer · Commerce · E-Commerce · Shopping · Discount Codes · Coupons · Merchants · MCP · Agentic Commerce · Retail
+
+## Checkmate on APIs.io
+
+Everything profiled for Checkmate is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/checkmate/](https://apis.io/providers/checkmate/)** — or go straight to one of the APIs or properties below.
+
+### APIs (3)
+
+- [Checkmate Health API](https://apis.io/apis/checkmate/checkmate-health-api/) — The Health API from Checkmate — 1 operation(s) for health.
+- [Checkmate Merchants API](https://apis.io/apis/checkmate/checkmate-merchants-api/) — The Merchants API from Checkmate — 2 operation(s) for merchants.
+- [Checkmate Shoppers API](https://apis.io/apis/checkmate/checkmate-shoppers-api/) — The Shoppers API from Checkmate — 1 operation(s) for shoppers.
+
+### Published properties
+
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
+
+#### MCP servers (1)
+
+Model Context Protocol servers that expose the API to agents.
+
+- [openstock](https://apis.io/servers/checkmate/openstock/)
+
+#### Collections (3)
+
+Postman and Open Collection request collections.
+
+- [OpenStock Health API](https://apis.io/collections/checkmate/open-checkmate-health-api/)
+- [OpenStock Health Merchants API](https://apis.io/collections/checkmate/open-checkmate-merchants-api/)
+- [OpenStock Health Shoppers API](https://apis.io/collections/checkmate/open-checkmate-shoppers-api/)
+
+#### Overlays (1)
+
+OpenAPI overlays, including conversational phrasing for each operation.
+
+- [Checkmate Openstock Overlay](https://apis.io/overlays/checkmate/checkmate-openstock-overlay/)
+
+#### Security (3)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Checkmate Authentication](https://apis.io/security/checkmate/checkmate-authentication/)
+- [Checkmate Domain Security](https://apis.io/security/checkmate/checkmate-domain-security/)
+- [Checkmate Vulnerability Disclosure](https://apis.io/security/checkmate/checkmate-vulnerability-disclosure/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
+- [Website](https://joincheckmate.com)
+- [Documentation](https://api.openstock.sh/docs)
+- [API reference](https://api.openstock.sh/docs)
+- [Sign up](https://joincheckmate.com/login)
+- [Blog](https://joincheckmate.com/blog)
+- [Security](https://joincheckmate.com/security)
+- [Terms of service](https://joincheckmate.com/terms-conditions)
+- [Privacy policy](https://joincheckmate.com/privacy-policy)
+
+## API Evangelist rating
+
+**Kin Score 40.3** — developing · rubric 0.25.0 · scored 2026-10-23
+
+| Facet | Score |
+|---|---|
+| Discoverability | 73.2 |
+| Contract quality | 46.3 |
+| Contract governance | 4.5 |
+| Operational transparency | 10.5 |
+| Developer ergonomics | 47.0 |
+| Access clarity | 34.2 |
+
+**Agent readiness 24.6** — agent-aware
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | — |
+| Reversibility Documented | — |
+| MCP Server | — |
+| Auth Clarity | bearer (partial credit) |
+| Idempotency | derived (partial credit) |
+| Error Semantics | verified |
+| OpenAPI Examples | — |
+| Rate Limit Signal | — |
+| Event Surface Described | — |
+| Agent Skills | derived (partial credit) |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+| Pagination Ratio | na |
+| Operation Distinctiveness | distinct |
+
+**Regulatory alignment 27.7** — Payments
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/checkmate/](https://apis.io/providers/checkmate/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Checkmate: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/checkmate/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
